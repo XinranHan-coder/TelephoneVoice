@@ -24,6 +24,8 @@ juce_add_plugin(TelephoneVoice
 
 juce_generate_juce_header(TelephoneVoice)
 
+target_compile_definitions(TelephoneVoice PRIVATE JUCE_VST3_CAN_REPLACE_VST2=0)
+
 # 添加源文件
 target_sources(TelephoneVoice PRIVATE
     Source/PluginProcessor.cpp
