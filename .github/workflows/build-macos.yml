@@ -1,0 +1,45 @@
+name: Build macOS VST3
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build-macos:
+    runs-on: macos-14
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Install dependencies
+        run: brew install ninja
+
+      - name: Configure CMake
+        run: |
+          cmake -B build -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_OSX_ARCHITECTURES="arm64;x86_64"
+
+      - name: Build
+        run: cmake --build build --config Release
+
+      - name: Verify VST3 bundle
+        run: |
+          VST3_PATH="build/TelephoneVoice_artefacts/Release/VST3/TelephoneVoice.vst3"
+          echo "Checking: $VST3_PATH"
+          ls -la "$VST3_PATH/Contents/MacOS/" || true
+          test -f "$VST3_PATH/Contents/MacOS/TelephoneVoice" || exit 1
+          file "$VST3_PATH/Contents/MacOS/TelephoneVoice"
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: TelephoneVoice-macOS-Universal
+          path: build/TelephoneVoice_artefacts/Release/VST3/TelephoneVoice.vst3
+          retention-days: 30
