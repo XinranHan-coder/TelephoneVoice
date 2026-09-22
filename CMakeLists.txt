@@ -22,6 +22,8 @@ juce_add_plugin(TelephoneVoice
     FORMATS VST3 Standalone
     PRODUCT_NAME "TelephoneVoice")
 
+juce_generate_juce_header(TelephoneVoice)
+
 # 添加源文件
 target_sources(TelephoneVoice PRIVATE
     Source/PluginProcessor.cpp
